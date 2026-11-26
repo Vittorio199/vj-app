@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VJ" />
+  <title>VJ — Noi</title>
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --card: #18181f;
+      --card-border: #272732;
+      --text: #f4f4f6;
+      --muted: #9898a6;
+      --accent: #ff4d6d;
+      --accent-soft: rgba(255, 77, 109, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      padding: env(safe-area-inset-top, 16px) 16px 32px;
+      max-width: 500px;
+      margin-inline: auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 4px 18px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .user-badge {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .counter-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .days-big {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .days-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .next-milestone {
+      text-align: right;
+      background: var(--accent-soft);
+      padding: 10px 14px;
+      border-radius: 14px;
+    }
+
+    .next-milestone strong {
+      display: block;
+      font-size: 16px;
+      color: #ff8fa3;
+    }
+
+    .next-milestone span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .section-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .q-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    select, .btn-small {
+      background: #22222c;
+      color: var(--text);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .question-text {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin: 6px 0 16px;
+    }
+
+    .answer-box {
+      background: #121218;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .answer-author {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .answer-content {
+      font-size: 15px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .blurred {
+      filter: blur(6px);
+      user-select: none;
+      opacity: 0.7;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: #121218;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 0 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      touch-action: none;
+      border: 2px solid var(--card-border);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .colors {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .color-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .color-dot.active {
+      border-color: #ffffff;
+      transform: scale(1.15);
+    }
+
+    .stickers {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      justify-content: space-between;
+    }
+
+    .sticker-btn {
+      flex: 1;
+      background: #22222c;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 6px 0;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99;
+      padding: 20px;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 24px;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+    }
+
+    .role-btns {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .role-btns button {
+      flex: 1;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background: #22222c;
+      color: white;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">V &amp; J</div>
+    <button class="user-badge" id="userBadge" onclick="openRoleModal()">Profilo: ...</button>
+  </header>
+
+  <!-- CONTATORE -->
+  <div class="card">
+    <div class="counter-grid">
+      <div>
+        <div class="days-big" id="daysCount">0</div>
+        <div class="days-label">giorni dal 4 Nov 2026</div>
+      </div>
+      <div class="next-milestone">
+        <strong id="nextCountdown">-</strong>
+        <span id="nextLabel">prossimo mesiversario</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOMANDE -->
+  <div class="card">
+    <div class="section-top">
+      <span class="section-title" id="qCounterLabel">Domanda (1/200)</span>
+      <div class="q-controls">
+        <select id="categorySelect" onchange="pickNewQuestion()">
+          <option value="all">Tutte (200)</option>
+          <option value="profonde">Profonde (50)</option>
+          <option value="divertenti">Divertenti (50)</option>
+          <option value="ricordi">Ricordi (50)</option>
+          <option value="intime">Intime (50)</option>
+        </select>
+        <button class="btn-small" onclick="pickNewQuestion()">↻ Cambia</button>
+      </div>
+    </div>
+
+    <div class="question-text" id="questionText">Caricamento...</div>
+
+    <div class="answer-box">
+      <div class="answer-author"><span>V</span><span id="statusV"></span></div>
+      <div class="answer-content" id="answerV">In attesa di risposta...</div>
+    </div>
+
+    <div class="answer-box">
+      <div class="answer-author"><span>J</span><span id="statusJ"></span></div>
+      <div class="answer-content" id="answerJ">In attesa di risposta...</div>
+    </div>
+
+    <div class="input-row">
+      <input type="text" id="answerInput" placeholder="Scrivi la tua risposta..." />
+      <button class="btn-primary" onclick="submitAnswer()">Invia</button>
+    </div>
+  </div>
+
+  <!-- LAVAGNA CONDIVISA -->
+  <div class="card">
+    <div class="section-top">
+      <span class="section-title">Lavagna condivisa</span>
+      <div>
+        <button class="btn-small" onclick="saveCanvas()">Salva foto</button>
+        <button class="btn-small" onclick="clearCanvas(true)">Pulisci</button>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="board" width="600" height="600"></canvas>
+    </div>
+
+    <div class="toolbar">
+      <div class="colors" id="colorPalette">
+        <div class="color-dot active" style="background:#111111" data-color="#111111"></div>
+        <div class="color-dot" style="background:#ff4d6d" data-color="#ff4d6d"></div>
+        <div class="color-dot" style="background:#3a86ff" data-color="#3a86ff"></div>
+        <div class="color-dot" style="background:#2ec4b6" data-color="#2ec4b6"></div>
+        <div class="color-dot" style="background:#ffbe0b" data-color="#ffbe0b"></div>
+        <div class="color-dot" style="background:#8338ec" data-color="#8338ec"></div>
+        <button class="btn-small" id="eraserBtn" onclick="toggleEraser()">Gomma</button>
+      </div>
+      <select id="brushSize">
+        <option value="4">Fine</option>
+        <option value="8" selected>Medio</option>
+        <option value="16">Spesso</option>
+      </select>
+    </div>
+
+    <div class="stickers">
+      <button class="sticker-btn" onclick="addSticker('❤️')">❤️</button>
+      <button class="sticker-btn" onclick="addSticker('🔥')">🔥</button>
+      <button class="sticker-btn" onclick="addSticker('😘')">😘</button>
+      <button class="sticker-btn" onclick="addSticker('🥺')">🥺</button>
+      <button class="sticker-btn" onclick="addSticker('✨')">✨</button>
+      <button class="sticker-btn" onclick="addSticker('🍕')">🍕</button>
+    </div>
+  </div>
+
+  <!-- SELEZIONE PROFILO -->
+  <div class="modal-backdrop" id="roleModal">
+    <div class="modal">
+      <h3>Chi sta usando l'app?</h3>
+      <p style="color:var(--muted); font-size:14px;">Serve per sapere quali risposte sono tue e quali sono sbloccate.</p>
+      <div class="role-btns">
+        <button onclick="setRole('V')">Sono V</button>
+        <button onclick="setRole('J')">Sono J</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5Pz0iUFQ-n2wrLCCt8y8W4W5ePkd2hRk",
+      authDomain: "tethered-vj.firebaseapp.com",
+      projectId: "tethered-vj",
+      storageBucket: "tethered-vj.firebasestorage.app",
+      messagingSenderId: "470112267033",
+      appId: "1:470112267033:web:a6416d339a5f12ed1a7388"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const coupleRef = doc(db, "couple", "vj_room");
+
+    // --- 1. CONTATORE DAL 4/11/2026 ---
+    const startDate = new Date(2026, 10, 4);
+    function updateCounter() {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+      document.getElementById("daysCount").textContent = diffDays >= 0 ? diffDays : 0;
+
+      let nextMonth4 = new Date(today.getFullYear(), today.getMonth(), 4);
+      if (today >= nextMonth4) {
+        nextMonth4 = new Date(today.getFullYear(), today.getMonth() + 1, 4);
+      }
+      const daysToNext = Math.ceil((nextMonth4 - today) / (1000 * 60 * 60 * 24));
+      document.getElementById("nextCountdown").textContent = daysToNext === 0 ? "Oggi! 🎉" : `tra ${daysToNext}g`;
+    }
+    updateCounter();
+
+    // --- 2. PROFILO UTENTE ---
+    let currentRole = localStorage.getItem("vj_role");
+    window.openRoleModal = () => document.getElementById("roleModal").style.display = "flex";
+    window.setRole = (role) => {
+      currentRole = role;
+      localStorage.setItem("vj_role", role);
+      document.getElementById("userBadge").textContent = `Profilo: ${role}`;
+      document.getElementById("roleModal").style.display = "none";
+      if (lastState) renderState(lastState);
+    };
+    if (!currentRole) openRoleModal();
+    else document.getElementById("userBadge").textContent = `Profilo: ${currentRole}`;
+
+    // --- 3. DATABASE 200 DOMANDE ---
+    const QUESTIONS = [
+      // PROFONDE (50)
+      { cat: "profonde", text: "Qual è una cosa di me che ti fa sentire subito al sicuro?" },
+      { cat: "profonde", text: "In quale momento recente ti sei sentito/a più orgoglioso/a di noi?" },
+      { cat: "profonde", text: "Qual è una paura che hai e in cui vorresti che ti stessi più vicino?" },
+      { cat: "profonde", text: "Cosa hai imparato sull'amore da quando stiamo insieme?" },
+      { cat: "profonde", text: "Qual è un obiettivo che vorresti realizzassimo insieme entro un anno?" },
+      { cat: "profonde", text: "Quale piccolo gesto quotidiano mio apprezzi più di quanto dico?" },
+      { cat: "profonde", text: "Quando capisci esattamente che ho bisogno di un abbraccio senza che io parli?" },
+      { cat: "profonde", text: "Se potessimo fermare il tempo in un momento vissuto insieme, quale sceglieresti?" },
+      { cat: "profonde", text: "Qual è il modo in cui ti senti più amato/a da me?" },
+      { cat: "profonde", text: "C'è qualcosa che vorresti ci dicessimo più spesso?" },
+      { cat: "profonde", text: "Qual è la qualità del mio carattere che ammiri di più?" },
+      { cat: "profonde", text: "Come pensi che siamo cresciuti come coppia rispetto all'inizio?" },
+      { cat: "profonde", text: "Qual è un consiglio che daresti a noi due tra cinque anni?" },
+      { cat: "profonde", text: "Quando sei giù di morale, cosa posso fare per farti stare davvero meglio?" },
+      { cat: "profonde", text: "Qual è una cosa di te che senti che solo io capisco fino in fondo?" },
+      { cat: "profonde", text: "Qual è il sogno più grande che hai per il tuo futuro personale?" },
+      { cat: "profonde", text: "Cosa significa per te 'sentirsi a casa' con una persona?" },
+      { cat: "profonde", text: "Qual è una sfida che hai superato e che ti ha reso la persona che sei oggi?" },
+      { cat: "profonde", text: "In cosa pensi che ci completiamo a vicenda?" },
+      { cat: "profonde", text: "Qual è una cosa che ti rende immensamente grato/a oggi?" },
+      { cat: "profonde", text: "Se dovessi descrivere la nostra relazione con tre parole, quali useresti?" },
+      { cat: "profonde", text: "Qual è il momento della giornata in cui senti più la mia mancanza?" },
+      { cat: "profonde", text: "C'è un'abitudine che vorresti costruissimo insieme quest'anno?" },
+      { cat: "profonde", text: "Qual è la cosa più coraggiosa che hai fatto per amore?" },
+      { cat: "profonde", text: "Come immagini la nostra domenica mattina ideale tra qualche anno?" },
+      { cat: "profonde", text: "Qual è una preoccupazione che ti porti dentro ultimamente e vuoi condividere?" },
+      { cat: "profonde", text: "Cosa ti fa sentire davvero ascoltato/a quando parliamo?" },
+      { cat: "profonde", text: "Qual è un valore su cui non scenderesti mai a compromessi?" },
+      { cat: "profonde", text: "In quale situazione ti sei sentito/a più vulnerabile con me?" },
+      { cat: "profonde", text: "Qual è una cosa che vorresti imparare o provare insieme a me?" },
+      { cat: "profonde", text: "Cosa pensi che gli altri notino subito quando ci vedono insieme?" },
+      { cat: "profonde", text: "Qual è un tuo difetto che speri io accetti sempre con pazienza?" },
+      { cat: "profonde", text: "Qual è un momento in cui ti ho sorpreso/a positivamente?" },
+      { cat: "profonde", text: "Cosa ti dà più serenità quando tutto intorno sembra caotico?" },
+      { cat: "profonde", text: "Se potessimo vivere per sei mesi in qualsiasi città del mondo, dove andremmo?" },
+      { cat: "profonde", text: "Qual è una promessa silenziosa che senti di avermi fatto?" },
+      { cat: "profonde", text: "Cosa ti fa capire che una relazione è davvero sana e forte?" },
+      { cat: "profonde", text: "Qual è il complimento più bello che ti abbia mai fatto?" },
+      { cat: "profonde", text: "C'è qualcosa che vorresti perdonarti o lasciarti alle spalle?" },
+      { cat: "profonde", text: "Come posso supportarti meglio nei tuoi progetti di questo periodo?" },
+      { cat: "profonde", text: "Qual è una cosa semplice che ti rende felice all'istante?" },
+      { cat: "profonde", text: "Quando ripensi a noi, qual è l'emozione dominante?" },
+      { cat: "profonde", text: "Qual è un limite sano che pensi sia importante mantenere in coppia?" },
+      { cat: "profonde", text: "Cosa hai scoperto di te stesso/a stando con me?" },
+      { cat: "profonde", text: "Qual è il viaggio che sogni di fare insieme almeno una volta nella vita?" },
+      { cat: "profonde", text: "In che modo ti piace ricevere affetto quando siamo in pubblico?" },
+      { cat: "profonde", text: "Qual è una cosa che non ti stancheresti mai di fare con me?" },
+      { cat: "profonde", text: "Cosa vorresti che ricordassimo sempre nei momenti di stress?" },
+      { cat: "profonde", text: "Qual è la cosa più preziosa che abbiamo costruito dal 4 novembre?" },
+      { cat: "profonde", text: "Se dovessi ringraziarmi per una cosa specifica oggi, quale sarebbe?" },
+
+      // DIVERTENTI (50)
+      { cat: "divertenti", text: "Chi dei due sopravviverebbe più a lungo in un'apocalisse zombie e perché?" },
+      { cat: "divertenti", text: "Qual è la cosa più assurda su cui potremmo litigare per finta?" },
+      { cat: "divertenti", text: "Qual è la mia abitudine più strana che ormai trovi quasi normale?" },
+      { cat: "divertenti", text: "Se dovessimo partecipare a un reality insieme, quale vinceremmo?" },
+      { cat: "divertenti", text: "Chi guida meglio e chi sceglie la musica migliore in auto?" },
+      { cat: "divertenti", text: "Qual è stato il momento più goffo o imbarazzante che abbiamo vissuto?" },
+      { cat: "divertenti", text: "Cosa ordinerei al ristorante se ordinassi tu al posto mio?" },
+      { cat: "divertenti", text: "Quale soprannome segreto mi daresti se fossi un personaggio di un film?" },
+      { cat: "divertenti", text: "Chi ci mette più tempo a prepararsi prima di uscire?" },
+      { cat: "divertenti", text: "Qual è il cibo che io amo ma che tu trovi sopravvalutato?" },
+      { cat: "divertenti", text: "Se fossimo due animali, quali saremmo?" },
+      { cat: "divertenti", text: "Chi dei due è più drammatico quando ha un leggero raffreddore?" },
+      { cat: "divertenti", text: "Qual è la scusa più ridicola che userei per non andare in palestra o uscire?" },
+      { cat: "divertenti", text: "Se vincessimo 10 milioni di euro domani, qual è la prima cavolata che compreresti?" },
+      { cat: "divertenti", text: "Chi dei due si addormenta per primo durante un film?" },
+      { cat: "divertenti", text: "Qual è l'emoji che mi rappresenta di più?" },
+      { cat: "divertenti", text: "Se dovessimo aprire un'attività insieme, cosa venderemmo?" },
+      { cat: "divertenti", text: "Chi è più permaloso quando perde a un gioco?" },
+      { cat: "divertenti", text: "Qual è la mia faccia tipica quando ho fame?" },
+      { cat: "divertenti", text: "Se potessi scambiare corpo con me per 24 ore, cosa faresti per prima cosa?" },
+      { cat: "divertenti", text: "Chi dei due manda i vocali più lunghi?" },
+      { cat: "divertenti", text: "Qual è il talento più inutile che possiedi?" },
+      { cat: "divertenti", text: "Se fossimo una coppia di criminali stile Bonnie & Clyde, per quale furto assurdo ci arresterebbero?" },
+      { cat: "divertenti", text: "Chi ha la galleria foto del telefono più caotica?" },
+      { cat: "divertenti", text: "Qual è la cosa più strana che ho fatto mentre ero sovrappensiero?" },
+      { cat: "divertenti", text: "Se dovessi cucinarmi una cena per impressionarmi con soli 3 ingredienti, cosa faresti?" },
+      { cat: "divertenti", text: "Chi dei due farebbe più figuracce davanti a una celebrità?" },
+      { cat: "divertenti", text: "Qual è una frase che ripeto sempre senza accorgermene?" },
+      { cat: "divertenti", text: "Chi è più bravo a contrattare o fare affari?" },
+      { cat: "divertenti", text: "Se la nostra storia fosse una sitcom, quale sarebbe il titolo?" },
+      { cat: "divertenti", text: "Chi dei due è più disordinato in camera o in macchina?" },
+      { cat: "divertenti", text: "Qual è il regalo più bizzarro che potresti farmi?" },
+      { cat: "divertenti", text: "Chi resisterebbe meno senza telefono per un weekend intero?" },
+      { cat: "divertenti", text: "Qual è la canzone che canto peggio ma con più convinzione?" },
+      { cat: "divertenti", text: "Chi dei due ha più probabilità di perdersi anche con Google Maps acceso?" },
+      { cat: "divertenti", text: "Se dovessimo fare una gara di mangiate, su quale cibo vinceresti?" },
+      { cat: "divertenti", text: "Qual è la cosa più infantile che ancora ti diverte tantissimo?" },
+      { cat: "divertenti", text: "Chi dei due fa più rumore quando mangia o sbadiglia?" },
+      { cat: "divertenti", text: "Qual è il mio superpotere inutile?" },
+      { cat: "divertenti", text: "Se dovessi scegliere un outfit assurdo per me per uscire stasera, cosa mi metteresti?" },
+      { cat: "divertenti", text: "Chi dei due è più bravo a mentire a carte?" },
+      { cat: "divertenti", text: "Qual è stata la nostra conversazione più no-sense di sempre?" },
+      { cat: "divertenti", text: "Chi si spaventa più facilmente guardando un horror?" },
+      { cat: "divertenti", text: "Se dovessimo adottare un animale esotico, quale sceglieresti?" },
+      { cat: "divertenti", text: "Chi dei due è più testardo quando sa di avere torto?" },
+      { cat: "divertenti", text: "Qual è il mio peggior difetto al volante o da passeggero?" },
+      { cat: "divertenti", text: "Se potessi cancellare un mio capo d'abbigliamento dal mio armadio, quale sparirebbe?" },
+      { cat: "divertenti", text: "Chi dei due farebbe la figura migliore a Pechino Express?" },
+      { cat: "divertenti", text: "Qual è il meme o video che ti fa ridere ogni volta che lo rivedi?" },
+      { cat: "divertenti", text: "Se fossimo vecchietti sulla panchina al parco, di cosa ci lamenteremmo?" },
+
+      // RICORDI (50)
+      { cat: "ricordi", text: "Qual è stata la primissima impressione che hai avuto di me?" },
+      { cat: "ricordi", text: "Quale dettaglio del nostro primo appuntamento ricordi ancora perfettamente?" },
+      { cat: "ricordi", text: "Qual è la foto nostra che preferisci in assoluto?" },
+      { cat: "ricordi", text: "Qual è stata la risata più bella che ci siamo fatti finora?" },
+      { cat: "ricordi", text: "In quale posto in cui siamo stati vorresti tornare domani?" },
+      { cat: "ricordi", text: "Qual è una canzone che appena parte ti fa pensare subito a me?" },
+      { cat: "ricordi", text: "Qual è stato il momento esatto in cui hai capito che ti piacevo davvero?" },
+      { cat: "ricordi", text: "Qual è il messaggio o la chiamata nostra che ricordi con più piacere?" },
+      { cat: "ricordi", text: "Ti ricordi cosa indossavo la prima volta che ci siamo visti?" },
+      { cat: "ricordi", text: "Qual è stato il nostro primo bacio e cosa hai provato un secondo dopo?" },
+      { cat: "ricordi", text: "Qual è la serata improvvisata più bella che abbiamo passato?" },
+      { cat: "ricordi", text: "Quale cibo o locale associ subito a noi due?" },
+      { cat: "ricordi", text: "C'è un momento in cui eri nervoso/a prima di vedermi? Perché?" },
+      { cat: "ricordi", text: "Qual è il viaggio o la gita fuori porta che ricordi con più affetto?" },
+      { cat: "ricordi", text: "Qual è stata la sorpresa più bella che ci siamo fatti?" },
+      { cat: "ricordi", text: "Quale dettaglio del 4 novembre 2026 ricordi più nitidamente?" },
+      { cat: "ricordi", text: "Qual è stata la volta in cui mi hai visto più felice?" },
+      { cat: "ricordi", text: "Qual è un posto nella nostra zona che ormai è diventato 'il nostro posto'?" },
+      { cat: "ricordi", text: "Ti ricordi di cosa abbiamo parlato la prima volta che siamo rimasti soli?" },
+      { cat: "ricordi", text: "Qual è il regalo o pensiero più significativo che ci siamo scambiati?" },
+      { cat: "ricordi", text: "Qual è stato un momento in cui abbiamo superato insieme un piccolo imprevisto?" },
+      { cat: "ricordi", text: "Qual è la storia di Instagram o lo scatto rubato nostro che ami di più?" },
+      { cat: "ricordi", text: "Quando hai capito che tra noi c'era una complicità diversa dal solito?" },
+      { cat: "ricordi", text: "Qual è stata la cena o il pranzo più buono fatto insieme?" },
+      { cat: "ricordi", text: "C'è una parola o una battuta interna che capiamo solo noi due?" },
+      { cat: "ricordi", text: "Qual è stato il momento più romantico vissuto finora?" },
+      { cat: "ricordi", text: "Ti ricordi la prima volta che ci siamo tenuti per mano?" },
+      { cat: "ricordi", text: "Qual è una notte o tarda serata nostra che non dimenticherai mai?" },
+      { cat: "ricordi", text: "Qual è stato il primo film o serie che abbiamo guardato insieme?" },
+      { cat: "ricordi", text: "Quale profumo o odore ti riporta subito a un nostro ricordo?" },
+      { cat: "ricordi", text: "Qual è stata la volta in cui ci siamo salutati facendo più fatica a staccarci?" },
+      { cat: "ricordi", text: "C'è qualcosa che pensavi di me all'inizio e che poi si è rivelato l'opposto?" },
+      { cat: "ricordi", text: "Qual è il ricordo più dolce che hai di noi a letto o sul divano?" },
+      { cat: "ricordi", text: "Qual è stata una giornata partita male che poi insieme abbiamo ribaltato?" },
+      { cat: "ricordi", text: "Ti ricordi il primo messaggio che mi hai scritto?" },
+      { cat: "ricordi", text: "Qual è stato il momento in cui ti sei sentito/a più vicino/a a me?" },
+      { cat: "ricordi", text: "Qual è la cosa più pazza o spontanea che abbiamo fatto insieme?" },
+      { cat: "ricordi", text: "Quale tragitto in auto insieme ricordi con più piacere?" },
+      { cat: "ricordi", text: "Qual è un complimento che ti ho fatto all'inizio e che ti è rimasto in testa?" },
+      { cat: "ricordi", text: "Qual è stata la festa o serata con gli amici più bella vissuta in coppia?" },
+      { cat: "ricordi", text: "Quale dettaglio del mio viso hai notato per primo?" },
+      { cat: "ricordi", text: "Qual è stato il risveglio più bello passato insieme?" },
+      { cat: "ricordi", text: "C'è un momento in cui avresti voluto scattare una foto ma eri troppo preso/a dal momento?" },
+      { cat: "ricordi", text: "Qual è stato il primo 'ti voglio bene' o 'ti amo' tra noi?" },
+      { cat: "ricordi", text: "Quale stagione o periodo dell'anno associ ai nostri ricordi più belli?" },
+      { cat: "ricordi", text: "Qual è una cosa che abbiamo fatto per la prima volta insieme?" },
+      { cat: "ricordi", text: "Qual è il ricordo più divertente che abbiamo legato al cibo?" },
+      { cat: "ricordi", text: "Qual è stata la volta in cui mi hai guardato pensando 'sono proprio fortunato/a'?" },
+      { cat: "ricordi", text: "Qual è il momento più tenero che abbiamo vissuto questa settimana?" },
+      { cat: "ricordi", text: "Se dovessi mettere un ricordo nostro in una capsula del tempo, quale sceglieresti?" },
+
+      // INTIME (50)
+      { cat: "intime", text: "Qual è la parte di me che trovi più irresistibile?" },
+      { cat: "intime", text: "Qual è il bacio nostro che ti è rimasto più impresso?" },
+      { cat: "intime", text: "Cosa ti fa perdere la testa quando siamo soli?" },
+      { cat: "intime", text: "Qual è un'idea per una serata perfetta solo per noi due?" },
+      { cat: "intime", text: "Dove vorresti che ti baciassi la prossima volta che ci vediamo?" },
+      { cat: "intime", text: "Qual è il mio profumo o dettaglio fisico che ti rimane addosso?" },
+      { cat: "intime", text: "Qual è una fantasia o un desiderio che vorresti realizzare insieme?" },
+      { cat: "intime", text: "Cosa ti manca di più di me quando passiamo una giornata lontani?" },
+      { cat: "intime", text: "Qual è il tipo di contatto fisico mio che ti fa venire subito i brividi?" },
+      { cat: "intime", text: "Preferisci quando prendo io l'iniziativa o quando lo fai tu?" },
+      { cat: "intime", text: "Qual è il momento della giornata in cui hai più voglia di me?" },
+      { cat: "intime", text: "Cosa indosso che ti fa impazzire più di tutto?" },
+      { cat: "intime", text: "Qual è un posto insolito in cui ti piacerebbe baciarci o stare insieme?" },
+      { cat: "intime", text: "Cosa ti piace che io faccia subito dopo che siamo stati insieme?" },
+      { cat: "intime", text: "Qual è uno sguardo mio che capisci al volo cosa significa?" },
+      { cat: "intime", text: "Qual è il ricordo più bollente che abbiamo finora?" },
+      { cat: "intime", text: "Ti piace di più la dolcezza lenta o la passione improvvisa?" },
+      { cat: "intime", text: "Qual è una cosa che non abbiamo ancora provato insieme e ti incuriosisce?" },
+      { cat: "intime", text: "Come posso farti capire che ti desidero senza usare parole?" },
+      { cat: "intime", text: "Qual è il punto più sensibile del tuo corpo quando ti tocco?" },
+      { cat: "intime", text: "Cosa ti fa sentire più desiderato/a da me?" },
+      { cat: "intime", text: "Qual è la prima cosa che vorresti fare appena chiudiamo la porta di casa?" },
+      { cat: "intime", text: "Ti piace ricevere messaggi piccanti durante la giornata?" },
+      { cat: "intime", text: "Qual è un dettaglio della mia voce o del mio respiro che ti attrae?" },
+      { cat: "intime", text: "Qual è la nostra posizione preferita per dormire o stare abbracciati?" },
+      { cat: "intime", text: "Cosa ti eccita di più mentalmente prima ancora che fisicamente?" },
+      { cat: "intime", text: "Qual è un massaggio o una coccola che vorresti ricevere stasera?" },
+      { cat: "intime", text: "C'è un momento in pubblico in cui avresti voluto portarmi via subito?" },
+      { cat: "intime", text: "Qual è la cosa più sexy che io faccia senza nemmeno accorgermene?" },
+      { cat: "intime", text: "Come immagini una nostra notte d'hotel perfetta?" },
+      { cat: "intime", text: "Qual è il complimento fisico che ti fa più piacere ricevere da me?" },
+      { cat: "intime", text: "Ti piace quando ti tengo stretto/a o quando ti lascio guidare?" },
+      { cat: "intime", text: "Qual è un gioco o una sfida di coppia che vorresti fare a porte chiuse?" },
+      { cat: "intime", text: "Cosa ti fa sentire completamente a tuo agio nell'intimità con me?" },
+      { cat: "intime", text: "Qual è il bacio che preferisci: sul collo, sulle labbra o altrove?" },
+      { cat: "intime", text: "Qual è una cosa che vorresti ti sussurrassi all'orecchio?" },
+      { cat: "intime", text: "Quando siamo sotto la doccia o a letto, qual è il tuo momento preferito?" },
+      { cat: "intime", text: "C'è qualcosa che ti piacerebbe ripetessimo molto più spesso?" },
+      { cat: "intime", text: "Qual è la parte del tuo corpo che ami di più quando la accarezzo?" },
+      { cat: "intime", text: "Cosa ti fa perdere completamente il controllo quando siamo vicini?" },
+      { cat: "intime", text: "Preferisci le mattine lente a letto o le notti lunghe?" },
+      { cat: "intime", text: "Qual è un desiderio segreto che non mi hai ancora confessato?" },
+      { cat: "intime", text: "Cosa ti fa capire subito che tra noi c'è un'intesa fisica unica?" },
+      { cat: "intime", text: "Qual è il gesto più sensuale che ti ho fatto recentemente?" },
+      { cat: "intime", text: "Se avessimo un'ora tutta per noi adesso, come la passeremmo?" },
+      { cat: "intime", text: "Qual è una canzone perfetta come sottofondo per noi due soli?" },
+      { cat: "intime", text: "Cosa ti piace vedere negli occhi dell'altro mentre ci baciamo?" },
+      { cat: "intime", text: "Qual è il modo migliore per farti rilassare completamente la sera?" },
+      { cat: "intime", text: "C'è un indumento mio che ti piace indossare o togliermi?" },
+      { cat: "intime", text: "Qual è la cosa che più ti fa desiderare il nostro prossimo incontro?" }
+    ];
+
+    let lastState = null;
+
+    window.pickNewQuestion = async () => {
+      const cat = document.getElementById("categorySelect").value;
+      const pool = cat === "all" ? QUESTIONS : QUESTIONS.filter(q => q.cat === cat);
+      const seen = lastState?.seenQuestions || [];
+      
+      // Filtra domande non ancora viste in questa categoria
+      let unseen = pool.filter(q => !seen.includes(q.text));
+      let resetSeen = false;
+
+      if (unseen.length === 0) {
+        unseen = pool;
+        resetSeen = true;
+      }
+
+      const currentQ = lastState?.question || "";
+      let next = unseen[Math.floor(Math.random() * unseen.length)];
+      if (unseen.length > 1 && next.text === currentQ) {
+        next = unseen[(unseen.indexOf(next) + 1) % unseen.length];
+      }
+
+      const updatedSeen = resetSeen ? [next.text] : [...new Set([...seen, next.text])];
+
+      await setDoc(coupleRef, {
+        question: next.text,
+        answerV: "",
+        answerJ: "",
+        seenQuestions: updatedSeen
+      }, { merge: true });
+    };
+
+    window.submitAnswer = async () => {
+      if (!currentRole) return openRoleModal();
+      const input = document.getElementById("answerInput");
+      const val = input.value.trim();
+      if (!val) return;
+      const field = currentRole === "V" ? "answerV" : "answerJ";
+      await setDoc(coupleRef, { [field]: val }, { merge: true });
+      input.value = "";
+    };
+
+    // --- 4. LAVAGNA CONDIVISA ---
+    const canvas = document.getElementById("board");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+    let currentColor = "#111111";
+    let eraser = false;
+    let saveTimer = null;
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    document.querySelectorAll(".color-dot").forEach(dot => {
+      dot.addEventListener("click", () => {
+        eraser = false;
+        document.getElementById("eraserBtn").style.borderColor = "var(--card-border)";
+        document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("active"));
+        dot.classList.add("active");
+        currentColor = dot.dataset.color;
+      });
+    });
+
+    window.toggleEraser = () => {
+      eraser = !eraser;
+      document.getElementById("eraserBtn").style.borderColor = eraser ? "var(--accent)" : "var(--card-border)";
+    };
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (clientX - rect.left) * (canvas.width / rect.width),
+        y: (clientY - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    function startDraw(e) {
+      drawing = true;
+      const pos = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function moveDraw(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      ctx.lineWidth = eraser ? 26 : Number(document.getElementById("brushSize").value);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = eraser ? "#ffffff" : currentColor;
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+
+    function endDraw() {
+      if (!drawing) return;
+      drawing = false;
+      scheduleSync();
+    }
+
+    canvas.addEventListener("mousedown", startDraw);
+    canvas.addEventListener("mousemove", moveDraw);
+    window.addEventListener("mouseup", endDraw);
+
+    canvas.addEventListener("touchstart", startDraw, { passive: false });
+    canvas.addEventListener("touchmove", moveDraw, { passive: false });
+    canvas.addEventListener("touchend", endDraw);
+
+    window.addSticker = (emoji) => {
+      ctx.font = "64px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const x = 150 + Math.random() * 300;
+      const y = 150 + Math.random() * 300;
+      ctx.fillText(emoji, x, y);
+      scheduleSync();
+    };
+
+    window.clearCanvas = (sync = true) => {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (sync) scheduleSync();
+    };
+
+    window.saveCanvas = () => {
+      const link = document.createElement("a");
+      link.download = `VJ-lavagna-${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+
+    function scheduleSync() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(async () => {
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.65);
+        await setDoc(coupleRef, {
+          canvasData: dataUrl,
+          updatedBy: currentRole || "unknown",
+          updatedAt: Date.now()
+        }, { merge: true });
+      }, 450);
+    }
+
+    // --- 5. SINCRONIZZAZIONE REALTIME ---
+    function renderState(data) {
+      const qText = data.question || QUESTIONS[0].text;
+      document.getElementById("questionText").textContent = qText;
+
+      const idx = QUESTIONS.findIndex(q => q.text === qText);
+      const seenCount = (data.seenQuestions || []).length || 1;
+      document.getElementById("qCounterLabel").textContent = `Domanda (${seenCount}/${QUESTIONS.length})`;
+
+      const aV = data.answerV || "";
+      const aJ = data.answerJ || "";
+      const bothAnswered = aV.length > 0 && aJ.length > 0;
+
+      const elV = document.getElementById("answerV");
+      const elJ = document.getElementById("answerJ");
+
+      if (!aV) {
+        elV.textContent = "In attesa di risposta...";
+        elV.classList.remove("blurred");
+        document.getElementById("statusV").textContent = "";
+      } else if (currentRole === "V" || bothAnswered) {
+        elV.textContent = aV;
+        elV.classList.remove("blurred");
+        document.getElementById("statusV").textContent = "✓";
+      } else {
+        elV.textContent = "Risposta nascosta — rispondi per sbloccare";
+        elV.classList.add("blurred");
+        document.getElementById("statusV").textContent = "Pronta 🔒";
+      }
+
+      if (!aJ) {
+        elJ.textContent = "In attesa di risposta...";
+        elJ.classList.remove("blurred");
+        document.getElementById("statusJ").textContent = "";
+      } else if (currentRole === "J" || bothAnswered) {
+        elJ.textContent = aJ;
+        elJ.classList.remove("blurred");
+        document.getElementById("statusJ").textContent = "✓";
+      } else {
+        elJ.textContent = "Risposta nascosta — rispondi per sbloccare";
+        elJ.classList.add("blurred");
+        document.getElementById("statusJ").textContent = "Pronta 🔒";
+      }
+
+      if (data.canvasData && !drawing) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+        img.src = data.canvasData;
+      }
+    }
+
+    onSnapshot(coupleRef, async (snap) => {
+      if (!snap.exists()) {
+        await setDoc(coupleRef, {
+          question: QUESTIONS[0].text,
+          answerV: "",
+          answerJ: "",
+          seenQuestions: [QUESTIONS[0].text]
+        });
+        return;
+      }
+      lastState = snap.data();
+      renderState(lastState);
+    });
+  </script>
+</body>
+</html>
